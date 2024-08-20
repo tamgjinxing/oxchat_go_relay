@@ -1,0 +1,5 @@
+db2/data.mdb
+db2/lock.mdb
+build_test.sh
+run_test.sh
+server_test.sh

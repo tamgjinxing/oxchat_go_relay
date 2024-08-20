@@ -1,0 +1,13 @@
+{
+    "RelayInfo":{
+        "databasePath": "./db2",
+        "port": "6970",
+        "domain": "relay.0xchat.com",
+        "name":"relay.0xchat.com",
+        "pubkey":"5eca50a04afaefe55659fb74810b42654e2268c1acca6e53801b9862db74a83a",
+        "description":"0xchat relay",
+        "contact":"support@0xchat.com",
+        "icon":"",
+        "supportNips":[1,4,5,9,17,25,28,40,57,58,96]
+    }
+}
