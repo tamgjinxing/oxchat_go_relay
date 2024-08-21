@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"time"
 
 	_ "net/http/pprof"
 
@@ -10,13 +11,16 @@ import (
 )
 
 func init() {
-	logger = log.New(&lumberjack.Logger{
-		Filename:   "./log/oxchat_relay.log", // 日志文件路径
-		MaxSize:    500,                      // 每个日志文件的最大尺寸 (MB)
-		MaxBackups: 7,                        // 保留的旧日志文件最大数量
-		MaxAge:     1,                        // 保留旧日志文件的最大天数
-		Compress:   true,                     // 是否压缩归档旧日志文件
-	}, "INFO: ", log.LstdFlags|log.Lshortfile)
+	loggerWrite = &lumberjack.Logger{
+		Filename:   "./log/oxchat_relay.log", //log file path
+		MaxSize:    500,                      // Maximum size of each log file (MB)
+		MaxBackups: 7,                        // Maximum number of old log files to keep
+		MaxAge:     1,                        // Maximum number of days to keep old log files
+		Compress:   false,                    // Whether to archive old log files
+		LocalTime:  true,
+	}
+
+	logger = log.New(loggerWrite, "INFO ", log.LstdFlags|log.Lshortfile)
 }
 
 func main() {
@@ -57,9 +61,10 @@ func main() {
 		OnConnectLogic,
 	)
 
-	relay.OnDisconnect = append(relay.OnDisconnect)
+	relay.OnDisconnect = append(relay.OnDisconnect, OnDisconnectLogic)
 
-	// 启动 pprof 服务器
+	changeFile()
+
 	go func() {
 		http.ListenAndServe(":6060", nil)
 	}()
@@ -69,4 +74,18 @@ func main() {
 	if err := http.ListenAndServe(":"+config.RelayInfo.Port, relay); err != nil {
 		logger.Fatalf("Failed to start server:%v\n", err)
 	}
+}
+
+func changeFile() {
+	go func() {
+		for {
+			nowTime := time.Now()
+			nowTimeStr := nowTime.Format("2006-01-02")
+			t2, _ := time.ParseInLocation("2006-01-02", nowTimeStr, time.Local)
+			next := t2.AddDate(0, 0, 1)
+			after := next.UnixNano() - nowTime.UnixNano() - 1
+			<-time.After(time.Duration(after) * time.Nanosecond)
+			loggerWrite.Rotate()
+		}
+	}()
 }

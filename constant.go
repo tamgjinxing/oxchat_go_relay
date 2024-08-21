@@ -5,6 +5,7 @@ import (
 
 	"github.com/fiatjaf/eventstore/lmdb"
 	"github.com/fiatjaf/khatru"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 var (
@@ -13,4 +14,6 @@ var (
 	relay = khatru.NewRelay()
 
 	logger *log.Logger
+
+	loggerWrite *lumberjack.Logger
 )

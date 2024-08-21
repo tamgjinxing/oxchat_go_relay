@@ -40,7 +40,7 @@ func DBSaveEventLogic(ctx context.Context, evt *nostr.Event) error {
 
 func PrintHeartEvent(ctx context.Context, event *nostr.Event) {
 	if event.Kind == 22456 {
-		logger.Printf("0xchat心跳事件kind=%d.EVENT为:%v\n", event.Kind, event)
+		logger.Printf("0xchat heart event kind=%d.EVENT:%v\n", event.Kind, event)
 	}
 }
 
